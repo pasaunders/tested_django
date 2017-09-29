@@ -1,0 +1,13 @@
+{% extends "belt/base.html" %}
+{% block content %}
+    <h1>{{ object.destination }}</h1>
+    <p>Planned By: {{ object.planner }}</p>
+    <p>Description: {{ object.description }}</p>
+    <p>Travel Date From: {{ object.date_from }}</p>
+    <p>Travel Date To: {{ object.date_to }}</p>
+    <h1>Other users' joining the trip:</h1>
+    <br>
+    {% for user in object.guests.all %}
+        <p>{{ user }}</p>
+    {% endfor %}
+{% endblock  %}

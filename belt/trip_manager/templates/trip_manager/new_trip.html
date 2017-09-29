@@ -1,0 +1,10 @@
+
+{% extends "belt/base.html" %}
+{% block content %}
+<h1>Add a Trip</h1>
+    <form action="{% url 'travel:add' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Add">
+    </form>
+{% endblock  %}

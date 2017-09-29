@@ -1,0 +1,43 @@
+{% extends "belt/base.html" %}
+{% block content %}
+<h1>Hello, {{ person }}!</h1>
+<br>
+<p>Your Trip Schedules</p>
+<table>
+    <tr>
+        <th>Destination</th>
+        <th>Travel Start Date</th>
+        <th>Travel End Date</th>
+        <th>Plan</th>
+    </tr>
+    {% for trip in user_trips %}
+    <tr>
+        <td><a href="{% url 'travel:detail' pk=trip.id %}">{{ trip.destination }}</a></td>
+        <td>{{ trip.date_from }}</td>
+        <td>{{ trip.date_to }}</td>
+        <td>{{ trip.description }}</td>
+    </tr>
+    {% endfor %}    
+</table>
+<br>
+<p>Other User's Travel Plans</p>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Destination</th>
+        <th>Travel Start Date</th>
+        <th>Travel End Date</th>
+        <th>Do You Want to Join?</th>
+    </tr>
+    {% for trip in other_trips %}
+    <tr>
+        <td>{{ trip.planner.name }}</td>
+        <td><a href="{% url 'travel:detail' pk=trip.id %}">{{ trip.destination }}</a></td>
+        <td>{{ trip.date_from }}</td>
+        <td>{{ trip.date_to }}</td>
+        <td><a href="{% url 'travel:join' pk=trip.id %}">Join</a></td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'travel:add' %}">Add Travel Plan</a>
+{% endblock  %}

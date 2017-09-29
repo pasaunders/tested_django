@@ -5,51 +5,51 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
+from django.views import View
 from .forms import signin_form, register_form
 from .models import Profile
-from django.views import View
 
 
-class index(View):
-
-    def get(self, request):
-        return render(request, 'login_manager/index.html')
-
-
-class signin(View):
+class SignIn(View):
 
     def post(self, request, *args, **kwargs):
         if request.POST.get('signin'):
-            user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
+            login = signin_form(request.POST)
+            user = authenticate(request, username=login.cleaned_data['username'], password=login.cleaned_data['password'])
             if user is not None:
                 login(request, user)
-                import pdb; pdb.set_trace()
-                return redirect(reverse('login:home'))
+                return redirect(reverse('travel:list'))
             return HttpResponse('invalid password')
         else:
-            user = User.objects.create_user(
-                username=request.POST['email'],
-                email=request.POST['email'],
-                password=request.POST['password'],
-                first_name=request.POST['first_name'],
-                last_name=request.POST['last_name'],
-                )
-            import pdb; pdb.set_trace()
-            if len(User.objects.all()) is 1:
-                permission = Permission.objects.get(codename='admin')
+            register = register_form(request.POST)
+            if register.is_valid():
+                user = User.objects.create_user(
+                    username=register.cleaned_data['username'],
+                    password=register.cleaned_data['password'],
+                    first_name=register.cleaned_data['first_name'],
+                    )
+                if len(User.objects.all()) is 1:
+                    permission = Permission.objects.get(codename='admin')
+                else:
+                    permission = Permission.objects.get(codename='user')
+                user.user_permissions.add(permission)
+                login(request, user)
             else:
-                permission = Permission.objects.get(codename='user')
-            user.user_permissions.add(permission)
-            import pdb; pdb.set_trace()
-            # add normal user permisisons for other models
-            login(request, user)
-        return redirect(reverse('login:home'))
+                import pdb; pdb.set_trace()
+                context = {
+                    'register_form': register_form(),
+                    'signin_form': signin_form(),
+                    'errors': register.errors.values()
+
+                }
+                return render(request, 'login_manager/signin.html', context)
+        return redirect(reverse('travel:list'))
 
 
     def get(self, request):
         context = {
-            'register_form': register_form,
-            'signin_form': signin_form,
+            'register_form': register_form(),
+            'signin_form': signin_form(),
         }
         return render(request, 'login_manager/signin.html', context)
 
@@ -58,4 +58,4 @@ class logout_view(View):
 
     def get(self, request):
         logout(request)
-        return redirect(reverse('login:home'))
+        return redirect(reverse('login:signin'))
