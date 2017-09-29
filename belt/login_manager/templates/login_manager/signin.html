@@ -1,0 +1,13 @@
+{% extends "belt/base.html" %}
+{% block content %}
+    <form action="{% url 'login:signin' %}" method="post">
+        {% csrf_token %}
+        {{ signin_form }}
+        <input type="submit" name="signin" value="Login">
+    </form>
+    <form action="{% url 'login:signin' %}" method="post">
+        {% csrf_token %}
+        {{ register_form }}
+        <input type="submit" name="register" value="Register">
+    </form>
+{% endblock  %}
