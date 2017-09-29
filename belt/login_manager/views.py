@@ -35,7 +35,6 @@ class SignIn(View):
                 user.user_permissions.add(permission)
                 login(request, user)
             else:
-                import pdb; pdb.set_trace()
                 context = {
                     'register_form': register_form(),
                     'signin_form': signin_form(),
